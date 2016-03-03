@@ -3,6 +3,8 @@ using System.Collections;
 
 public class WayPoint : MonoBehaviour {
 
+    public GameObject nextA;
+    public GameObject nextB;
     public GameObject next;
     public Vector3 start, end, segment, unitVec;
     float mag;
@@ -10,7 +12,15 @@ public class WayPoint : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         start = transform.position;
-        end = next.transform.position;
+        if (Random.Range(0, 5) > 1)
+        {
+            end = nextA.transform.position;
+            next = nextA;
+        }
+        else {
+            end = nextB.transform.position;
+            next = nextB;
+        }
         segment = end - start;
         mag = segment.magnitude;
         unitVec = segment.normalized;
