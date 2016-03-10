@@ -59,33 +59,34 @@ public class EnemyScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        counter += Time.deltaTime;
-
-        if (counter > 0)
+        FindTarget();
+        if ((target - transform.position).magnitude < 20)
         {
-            FindTarget();
-            counter = -findInterval;
-            //attractFlag.enabled = false;
-            attracted = false;
-            stunned = false;
+            counter += Time.deltaTime;
+            if (counter > 0)
+            {
+                counter = -findInterval;
+                //attractFlag.enabled = false;
+                attracted = false;
+                stunned = false;
+            }
+
+            Vector3 delta = new Vector3(target.x - transform.position.x, 0, target.z - transform.position.z);
+
+            //GetComponent<Rigidbody>().MovePosition(Vector3.Lerp(transform.position, target, 7));
+            delta.Normalize();
+            delta *= Accel;
+            GetComponent<Rigidbody>().AddForce(delta, ForceMode.Impulse);
+            if (GetComponent<Rigidbody>().velocity.magnitude > Speed)
+            {
+                Vector3 slow = -GetComponent<Rigidbody>().velocity;
+                slow.Normalize();
+                slow *= GetComponent<Rigidbody>().velocity.magnitude - Speed;
+
+                GetComponent<Rigidbody>().AddForce(slow, ForceMode.Impulse);
+            }
+
         }
-
-        Vector3 delta = new Vector3(target.x - transform.position.x, 0, target.z - transform.position.z);
-
-        //GetComponent<Rigidbody>().MovePosition(Vector3.Lerp(transform.position, target, 7));
-        delta.Normalize();
-        delta *= Accel;
-        GetComponent<Rigidbody>().AddForce(delta, ForceMode.Impulse);
-        if (GetComponent<Rigidbody>().velocity.magnitude > Speed)
-        {
-            Vector3 slow = -GetComponent<Rigidbody>().velocity;
-            slow.Normalize();
-            slow *= GetComponent<Rigidbody>().velocity.magnitude - Speed;
-
-            GetComponent<Rigidbody>().AddForce(slow, ForceMode.Impulse);
-        }
-
-
 
     }
 

@@ -13,12 +13,42 @@ public class PathFollow : Vehicle {
 	float closestDistance;
 	GameObject wp;
 
+    GameObject player;
+
 	// Use this for initialization
 	void Start () {
 		base.Start (); 
 		path = GameObject.FindGameObjectsWithTag ("WP");
 		getClosestPoint ();
+        player = GameObject.FindGameObjectWithTag("Player");
 	}
+
+    void Update()
+    {
+        if ((transform.position - player.transform.position).magnitude >= 20)
+        {
+
+            CalcSteeringForce();
+
+            //update velocity
+            velocity += acceleration * Time.deltaTime;
+            velocity.y = 0; // we are staying in the x/z plane
+            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
+            //orient the transform to face where we going
+            if (velocity != Vector3.zero)
+                transform.forward = velocity.normalized;
+
+            // keep us grounded
+            velocity.y -= gravity * Time.deltaTime;
+
+            // the CharacterController moves us subject to physical constraints
+            characterController.Move(velocity * Time.deltaTime);
+
+            //reset acceleration for next cycle
+            acceleration = Vector3.zero;
+        }
+    }
 	
 	protected override void CalcSteeringForce(){
 		Vector3 force = Vector3.zero;
